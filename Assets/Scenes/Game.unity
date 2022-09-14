@@ -715,8 +715,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.08739488, y: 0.7248463, z: -0.0935834, w: 0.6769062}
+  m_LocalPosition: {x: -3.2778406, y: 3.924427, z: 42.87065}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1400,22 +1400,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car
       objectReference: {fileID: 0}
+    - target: {fileID: 8041663600213858919, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
+      propertyPath: m_Mass
+      value: 1200
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
---- !u!1 &8041663600213858917 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7129413067907069677, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
-  m_PrefabInstance: {fileID: 966436745145969800}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8041663600213858920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8041663600213858917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d5e18d42cdef9b488832ba9773e2712, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
