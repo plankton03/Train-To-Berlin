@@ -11,6 +11,9 @@ public class MovementHandler : MonoBehaviour
     private bool isBreaking;
 
 
+    [Header("User Interface")] [Range(0, 0.5f)]
+    public float turnTouchArea = 0.5f;
+
     [Header("General")] public float maxSteeringAngle = 30f;
     public float motorForce = 50f;
     public float brakeForce = 3000f;
@@ -28,20 +31,33 @@ public class MovementHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        GetInput();
+        GetInputPC();
         HandleMotor();
         HandleSteering();
         UpdateWheelsVisuals();
     }
 
-    private void GetInput()
+    private void GetInputCellphone()
     {
-        //todo : change it to touch 
+        if (Input.touches.Length >= 2)
+            verticalInput = -1 * backwardSpeedPercentage;
+
+        else if (Input.touches.Length > 0)
+        {
+            //todo : x or y ????
+            if (Input.GetTouch(0).position.x < Screen.width * turnTouchArea)
+                horizontalInput = -1f;
+            else if (Input.GetTouch(0).position.x > Screen.width * (1 - turnTouchArea))
+                horizontalInput = +1f;
+        }
+    }
+
+    //for test
+    private void GetInputPC()
+    {
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
         isBreaking = Input.GetKey(KeyCode.Space);
-        
-        
     }
 
     private void HandleMotor()
