@@ -8,6 +8,7 @@ namespace Scenes
         private float verticalInput;
         private float steerAngle;
         private bool isBreaking;
+        private bool movingBackward;
 
 
         [Header("User Interface")] [Range(0, 0.5f)]
@@ -54,13 +55,12 @@ namespace Scenes
             }
             else
                 horizontalInput = 0;
-            
         }
 
         //for test
         private void GetInputPC()
         {
-            if (Input.GetAxis("Vertical") <= -0.2)
+            if (Input.GetAxis("Vertical") <= -0.05)
                 verticalInput = -1 * backwardSpeedPercentage;
             else
                 verticalInput = +1;
@@ -78,16 +78,35 @@ namespace Scenes
 
         private void HandleMotor()
         {
-            frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-            frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+            
 
-            float currBrakeForce = isBreaking ? brakeForce : 0f;
+            //float currBrakeForce = isBreaking ? brakeForce : 0f;
+            float currBrakeForce;
+            
+            if (movingBackward && verticalInput > 0)
+            {
+                currBrakeForce = brakeForce;
+                movingBackward = false;
+            }else if (!movingBackward && verticalInput < 0)
+            {
+                currBrakeForce = brakeForce;
+                movingBackward = true;
+            }
+            else
+            {
+                currBrakeForce = 0;
+            }
             frontLeftWheelCollider.brakeTorque = currBrakeForce;
             frontRightWheelCollider.brakeTorque = currBrakeForce;
             backLeftWheelCollider.brakeTorque = currBrakeForce;
             backRightWheelCollider.brakeTorque = currBrakeForce;
+            if (currBrakeForce == 0)
+            {
+                frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
+                            frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+            }
         }
-        
+
 
         private void HandleSteering()
         {
