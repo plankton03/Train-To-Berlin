@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Scenes
@@ -29,12 +30,19 @@ namespace Scenes
         public Transform backLeftWheelTransform;
         public Transform backRightWheelTransform;
 
+        public Transform centerOfMass;
+
         private void FixedUpdate()
         {
             GetInputPC(); //you can use GetInputCellphone
             HandleMotor();
             HandleSteering();
             UpdateWheelsVisuals();
+        }
+
+        private void Start()
+        {
+            GetComponent<Rigidbody>().centerOfMass = centerOfMass.localPosition;
         }
 
         private void GetInputCellphone()

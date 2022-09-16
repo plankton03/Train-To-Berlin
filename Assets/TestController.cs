@@ -56,6 +56,7 @@ public class TestController : MonoBehaviour
     private Vector3 carRight;
     private Vector3 carFwd;
     private Vector3 tempVEC;
+    public Transform centerOfMass;
 
 
     void Start()
@@ -83,6 +84,7 @@ public class TestController : MonoBehaviour
 
         //negative value in Y axis to prevent car from flipping over
         carRigidbody.centerOfMass = new Vector3(0f, -0.7f, .35f);
+        //carRigidbody.centerOfMass = centerOfMass.localPosition;
     }
 
     // Update is called once per frame
