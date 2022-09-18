@@ -15,7 +15,8 @@ namespace Scenes
         [Header("User Interface")] [Range(0, 0.5f)]
         public float turnTouchArea = 0.5f;
 
-        [Header("General")] public float maxSteeringAngle = 30f;
+        [Header("General")] 
+        public float maxSteeringAngle = 30f;
         public float motorForce = 50f;
         public float brakeForce = 3000f;
         [Range(0, 1f)] public float backwardSpeedPercentage = 1;

@@ -1714,6 +1714,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -8.54
       objectReference: {fileID: 0}
+    - target: {fileID: 526269840907690344, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 716790465612627344, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1824,7 +1828,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8041663600213858920, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8041663600213858920, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: centerOfMass
@@ -1840,7 +1844,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8885602343575859251, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8885602343575859251, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: turnSpeed
@@ -1903,7 +1907,7 @@ BoxCollider:
   m_GameObject: {fileID: 966436745145969801}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 2.66, y: 2.57, z: 3.58}
   m_Center: {x: 0, y: 1.46, z: 0}
