@@ -1808,7 +1808,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8041663600213858918, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8041663600213858919, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_Drag
@@ -1816,7 +1816,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8041663600213858919, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_Mass
-      value: 800
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8041663600213858919, guid: d5a956acf1a6da34491c12a72f2198b4, type: 3}
       propertyPath: m_Interpolate

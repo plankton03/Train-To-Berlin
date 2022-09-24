@@ -38,6 +38,8 @@ public class CarController : MonoBehaviour
 
     public float brakingPower;
 
+    public float limitBrakingPower;
+
 
     public float angle;
 
@@ -125,6 +127,15 @@ public class CarController : MonoBehaviour
                     wheel.collider.brakeTorque = brakingPower;
                 }
             }
+            else if (mySpeed > 1.1 * maxSpeed)
+            {
+                foreach (var wheel in wheels)
+                {
+                    wheel.collider.motorTorque = 0;
+                    wheel.collider.brakeTorque = limitBrakingPower;
+                    isBraking = true;
+                }
+            }
             else
             {
                 foreach (var wheel in wheels)
@@ -138,13 +149,19 @@ public class CarController : MonoBehaviour
 
     private void Turn()
     {
-        foreach (Wheel wheel in wheels)
+        angle = horizontalInput * maxSteerAngle * turnSensitivity;
+        if (Mathf.Abs(angle) <= Mathf.Epsilon)
         {
-            if (wheel.axel == Axel.Front)
+            rigidbody.velocity = new Vector3(0, 0, rigidbody.velocity.z);
+        }
+        else
+        {
+            foreach (Wheel wheel in wheels)
             {
-                angle = horizontalInput * maxSteerAngle * turnSensitivity;
-
-                wheel.collider.steerAngle = Mathf.Lerp(wheel.collider.steerAngle, angle, 0.5f);
+                if (wheel.axel == Axel.Front)
+                {
+                    wheel.collider.steerAngle = Mathf.Lerp(wheel.collider.steerAngle, angle, 0.5f);
+                }
             }
         }
     }

@@ -926,6 +926,7 @@ MonoBehaviour:
   carGrip: 70
   turnSpeed: 3
   mySpeed: 0
+  centerOfMass: {fileID: 0}
 --- !u!114 &8041663600213858920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -933,7 +934,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7129413067907069677}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d5e18d42cdef9b488832ba9773e2712, type: 3}
   m_Name: 
@@ -951,6 +952,7 @@ MonoBehaviour:
   frontRightWheelTransform: {fileID: 1759304627641308452}
   backLeftWheelTransform: {fileID: 4414284837672822570}
   backRightWheelTransform: {fileID: 3965927129492546501}
+  centerOfMass: {fileID: 0}
 --- !u!1 &8389969013730746954
 GameObject:
   m_ObjectHideFlags: 0
