@@ -33,6 +33,20 @@ public class CarController : MonoBehaviour
     public Vector3 centerOfMass;
     private Rigidbody rigidbody;
 
+
+    public bool isBraking;
+
+    public float brakingPower;
+
+
+    public float angle;
+
+    public float turningBrakingPower;
+
+    public float straightBrakingPower;
+
+    public Vector3 velocity;
+
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
@@ -43,10 +57,10 @@ public class CarController : MonoBehaviour
     void Update()
     {
         GetInputs();
+        HandleMovement();
         Move();
         Turn();
     }
-
 
 
     private void LateUpdate()
@@ -63,24 +77,61 @@ public class CarController : MonoBehaviour
         else
             verticalInput = 1;
     }
-    
 
+
+    private void HandleMovement()
+    {
+        velocity = transform.InverseTransformDirection(rigidbody.velocity);
+        if (velocity.z > 5 && verticalInput < 0)
+        {
+            isBraking = true;
+            brakingPower = straightBrakingPower;
+        }
+        else if (velocity.z < -5 && verticalInput > 0)
+        {
+            isBraking = true;
+            brakingPower = straightBrakingPower;
+        }
+        else if (Mathf.Abs(angle) > 5)
+        {
+            isBraking = true;
+            brakingPower = turningBrakingPower;
+        }
+        else
+        {
+            isBraking = false;
+            brakingPower = 0;
+        }
+    }
 
     private void Move()
     {
-        mySpeed = rigidbody.velocity.magnitude;
-        if (mySpeed < maxSpeed)
-        {
-            foreach (var wheel in wheels)
-            {
-                wheel.collider.motorTorque = verticalInput * maxAcceleration * motorPower * Time.deltaTime;
-            }
-        }
-        else
+        if (isBraking)
         {
             foreach (var wheel in wheels)
             {
                 wheel.collider.motorTorque = 0;
+                wheel.collider.brakeTorque = brakingPower;
+            }
+        }
+        else
+        {
+            mySpeed = rigidbody.velocity.magnitude;
+            if (mySpeed < maxSpeed)
+            {
+                foreach (var wheel in wheels)
+                {
+                    wheel.collider.motorTorque = verticalInput * maxAcceleration * motorPower * Time.deltaTime;
+                    wheel.collider.brakeTorque = brakingPower;
+                }
+            }
+            else
+            {
+                foreach (var wheel in wheels)
+                {
+                    wheel.collider.motorTorque = 0;
+                    wheel.collider.brakeTorque = brakingPower;
+                }
             }
         }
     }
@@ -91,8 +142,8 @@ public class CarController : MonoBehaviour
         {
             if (wheel.axel == Axel.Front)
             {
-                float angle = horizontalInput * maxSteerAngle * turnSensitivity ;
-                print(angle);
+                angle = horizontalInput * maxSteerAngle * turnSensitivity;
+
                 wheel.collider.steerAngle = Mathf.Lerp(wheel.collider.steerAngle, angle, 0.5f);
             }
         }

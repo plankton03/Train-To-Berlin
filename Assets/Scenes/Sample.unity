@@ -522,7 +522,7 @@ MonoBehaviour:
   motorPower: 500
   turnSensitivity: 2
   mySpeed: 0
-  centerOfMass: {x: 0, y: 0.3, z: 0}
+  centerOfMass: {x: 0, y: -0.3, z: 0}
 --- !u!4 &2127172817 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7547441587212300589, guid: c23b35d1b1fa33f4baf53e8539258a00, type: 3}
