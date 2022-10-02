@@ -80,7 +80,7 @@ public class TestController : MonoBehaviour
         // cache the World Right Vector for our car
         carRight = Vector3.right;
         // call to set up our wheels array
-        setUpWheels();
+        //setUpWheels();
 
         //negative value in Y axis to prevent car from flipping over
         carRigidbody.centerOfMass = new Vector3(0f, -0.7f, .35f);
@@ -96,13 +96,13 @@ public class TestController : MonoBehaviour
         checkInput();
     }
 
-    private void LateUpdate()
-    {
-        // this function makes the visual 3d wheels rotate and turn
-        rotateVisualWheels();
-        //this is where we send to a function to do engine sounds
-        //engineSound();
-    }
+    // private void LateUpdate()
+    // {
+    //     // this function makes the visual 3d wheels rotate and turn
+    //     rotateVisualWheels();
+    //     //this is where we send to a function to do engine sounds
+    //     //engineSound();
+    // }
 
     public void setUpWheels()
     {
