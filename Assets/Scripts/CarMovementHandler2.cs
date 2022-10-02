@@ -5,64 +5,62 @@ using UnityEngine.VFX;
 
 public class CarMovementHandler2 : MonoBehaviour
 {
-
+    
+    [Header("Input values")]
     public float horizontalInput;
-
     public float verticalInput;
 
+    [Header("Forward movement variables")]
+    public float moveFactor = 30;
+
+    [Header("Turning variables")]
     public float turnFactor;
 
-    public float steerAngle;
 
-    public float moveFactor = 30;
-    
 
+    [Header("Visual")]
     public float visualFactor;
-
     public float visualTime;
-
-    public float visualAngle;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    
+    private float _visualAngle;
 
-    // Update is called once per frame
+    
     void Update()
     {
         CheckInput();
-        Move();
-     Turn();
+        MoveForward();
+        Turn();
         Visual();
     }
-
-    void Move()
-    {
-        transform.position += (verticalInput *Time.deltaTime * transform.forward)* moveFactor;
-    }
-
-    void Turn()
-    {  
-        float angle =Mathf.Rad2Deg * ( turnFactor * horizontalInput * Time.deltaTime);
-         transform.Rotate(transform.up , angle);
-    }
-
-    void Visual()
-    {
-        
-        visualAngle = Mathf.Lerp(visualAngle, turnFactor * horizontalInput * visualFactor * Mathf.Rad2Deg, visualTime * Time.deltaTime);
-
-
-        
-        transform.rotation = Quaternion.Euler(transform.eulerAngles.x,transform.eulerAngles.y,visualAngle);
-        // transform.Rotate(transform.forward , visualAngle * 0.2f);
-    }
-    void CheckInput()
+    
+    private void CheckInput()
     {
         horizontalInput = Input.GetAxis("Horizontal");
 
         verticalInput = 0.5f;
     }
+
+    private void MoveForward()
+    {
+        transform.position += (verticalInput * Time.deltaTime * transform.forward) * moveFactor;
+    }
+
+    private void Turn()
+    {
+        float angle = Mathf.Rad2Deg * (turnFactor * horizontalInput * Time.deltaTime);
+        transform.Rotate(transform.up, angle);
+    }
+
+    private void Visual()
+    {
+        _visualAngle = Mathf.Lerp(_visualAngle, turnFactor * horizontalInput * visualFactor * Mathf.Rad2Deg,
+            visualTime * Time.deltaTime);
+
+
+        Vector3 transformEulerAngles = transform.eulerAngles;
+        transform.rotation = Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y, _visualAngle);
+    }
+
+
 }
