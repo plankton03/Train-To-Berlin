@@ -1,106 +1,153 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
+using UnityEngine.Serialization;
+using UnityEngine.VFX;
 
 public class CarMovementHandler : MonoBehaviour
 {
-    private Rigidbody _rigidBody;
+    [Header("Input values")] public float horizontalInput;
+    public float verticalInput;
 
-    public float power;
-    public float throttle;
-    public float turnSpeed;
-    public float carGrip;
+    [Header("Forward movement variables")] public float moveFactor = 30;
 
-    private Vector3 imp;
-    public float maxSpeed;
-    public float mySpeed;
-    public float maxSpeedToTurn;
-    private Vector3 turnVector;
-
-    private Vector3 engineForce;
-
-    public float horizontalInput;
+    [Header("Turning variables")] public float turnFactor;
 
 
+    [Header("Visual")] public float tiltModifier;
+    public float tiltTime;
 
 
+    private float _tiltAngle;
 
-    public float reverse;
-    
-    
-     
-    void Start()
+
+    private int _numOfGroundTagObjects = 0;
+    private Rigidbody _rigidbody;
+
+    public Transform centerOfMass;
+
+    private Vector3 previousLoc;
+
+    private bool flag = true;
+
+    public Vector3 velocity;
+
+    private bool _moveable = true;
+
+    private void Start()
     {
-        initialize();
+        _rigidbody = GetComponent<Rigidbody>();
+        // _rigidbody.centerOfMass = centerOfMass.localPosition;
     }
-    
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag.Equals("Ground"))
+        {
+            _numOfGroundTagObjects++;
+        }
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag.Equals("Ground"))
+        {
+            _numOfGroundTagObjects--;
+        }
+    }
+
+//     void Update()
+//     {
+//         if (_numOfGroundTagObjects > 0)
+//         {
+//             previousLoc = transform.position;
+//             CheckInput();
+//             MoveForward();
+//             Turn();
+//             Visual();
+//             
+//             flag = false;
+//         }
+//         else
+//         {
+//             
+//             if (!flag)
+//             {
+//                 velocity = (transform.position - previousLoc) / Time.deltaTime;
+//                 _rigidbody.velocity = velocity;
+//                 flag = true;
+//             }
+// previousLoc = transform.position;
+//             
+//
+//         }
+//     }
+
+    private void OnCollisionEnter(Collision collisionInfo)
+    {
+        if (collisionInfo.transform.tag.Equals("Obstacle"))
+        {
+            _moveable = false;
+            print("can't move");
+        }
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.transform.tag.Equals("Obstacle"))
+        {
+            _moveable = true;
+            print("movement is ok");
+        }
+    }
 
     void Update()
     {
-        CarPhysicsUpdate();
-        
         CheckInput();
-        
+        MoveForward();
+        if (_numOfGroundTagObjects > 0)
+        {
+            Turn();
+            Visual();
+        }
     }
 
     private void CheckInput()
     {
         horizontalInput = Input.GetAxis("Horizontal");
-        throttle = Input.GetAxis("Vertical");
+
+        verticalInput = 0.5f;
     }
 
-    private void FixedUpdate()
+    private void MoveForward()
     {
-        
-        
-        if (mySpeed < maxSpeed)
-            _rigidBody.AddForce(engineForce * Time.deltaTime);
-        
-        if (mySpeed > maxSpeedToTurn)
-            _rigidBody.AddTorque(turnVector * Time.deltaTime);
-        else if (mySpeed < maxSpeedToTurn)
-            return;
-
-        _rigidBody.AddForce(imp * Time.deltaTime);
+        if (_moveable)
+        {
+            transform.position += (verticalInput * Time.deltaTime * transform.forward) * moveFactor;
+   
+        }
     }
 
-    private void initialize()
+    private void Turn()
     {
-        _rigidBody = GetComponent<Rigidbody>();
-        _rigidBody.centerOfMass = new Vector3(0f, -0.3f, 0f);
+        float angle = Mathf.Rad2Deg * (turnFactor * horizontalInput * Time.deltaTime);
+
+        Vector3 transformEulerAngles = transform.eulerAngles;
+        transform.rotation =
+            Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y + angle, transformEulerAngles.z);
     }
 
-    private void CarPhysicsUpdate()
+    private void Visual()
     {
-            Vector3 velocity = _rigidBody.velocity;
-            velocity = new Vector3(velocity.x, 0, velocity.z);
-
-            Vector3 direction = transform.TransformDirection(Vector3.forward);
-            direction = Vector3.Normalize(new Vector3(direction.x,0,direction.z));
-
-            float slideSpeed = Vector3.Dot(transform.right, velocity);
-             mySpeed = velocity.magnitude;
+        _tiltAngle = Mathf.Lerp(_tiltAngle, turnFactor * horizontalInput * tiltModifier * Mathf.Rad2Deg,
+            tiltTime * Time.deltaTime);
 
 
-
-             reverse = Mathf.Sign(Vector3.Dot(velocity, direction));
-
-             engineForce =  (power * throttle) * _rigidBody.mass * direction;
-
-            float actualTurn = horizontalInput;
-
-            if (reverse < 0.15)
-            {
-                actualTurn = -actualTurn;
-            }
-
-            turnVector = (((transform.up * turnSpeed) * actualTurn )* _rigidBody.mass) * 800;
-
-            float actualGrip = Mathf.Lerp(1, carGrip, mySpeed* 0.02f);
-
-            imp = transform.right * (-slideSpeed * _rigidBody.mass * actualGrip);
-
+        Vector3 transformEulerAngles = transform.eulerAngles;
+        transform.rotation = Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y, _tiltAngle);
     }
 }
