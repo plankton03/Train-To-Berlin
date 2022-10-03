@@ -60,32 +60,32 @@ public class CarMovementHandler : MonoBehaviour
         }
     }
 
-//     void Update()
-//     {
-//         if (_numOfGroundTagObjects > 0)
-//         {
-//             previousLoc = transform.position;
-//             CheckInput();
-//             MoveForward();
-//             Turn();
-//             Visual();
-//             
-//             flag = false;
-//         }
-//         else
-//         {
-//             
-//             if (!flag)
-//             {
-//                 velocity = (transform.position - previousLoc) / Time.deltaTime;
-//                 _rigidbody.velocity = velocity;
-//                 flag = true;
-//             }
-// previousLoc = transform.position;
-//             
-//
-//         }
-//     }
+    void Update()
+    {
+        if (_numOfGroundTagObjects > 0)
+        {
+            previousLoc = transform.position;
+            CheckInput();
+            MoveForward();
+            Turn();
+            Visual();
+            
+            flag = false;
+        }
+        else
+        {
+            
+            if (!flag)
+            {
+                velocity = (transform.position - previousLoc) / Time.deltaTime;
+                _rigidbody.velocity = velocity;
+                flag = true;
+            }
+previousLoc = transform.position;
+            
+
+        }
+    }
 
     private void OnCollisionEnter(Collision collisionInfo)
     {
@@ -105,16 +105,16 @@ public class CarMovementHandler : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        CheckInput();
-        MoveForward();
-        if (_numOfGroundTagObjects > 0)
-        {
-            Turn();
-            Visual();
-        }
-    }
+    // void Update()
+    // {
+    //     CheckInput();
+    //     MoveForward();
+    //     if (_numOfGroundTagObjects > 0)
+    //     {
+    //         Turn();
+    //         Visual();
+    //     }
+    // }
 
     private void CheckInput()
     {
