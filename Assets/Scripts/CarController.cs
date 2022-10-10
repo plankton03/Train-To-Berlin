@@ -15,23 +15,28 @@ public class CarController : MonoBehaviour
     public float rearTrack;
     public float turnRadius;
     public float speed;
-    public Vector3 velocity;
+    public float steeringSpeed;
 
     [Header("Inputs")]
     public float steerInput;
+    public float verticalInput;
 
     public float _ackermannAngleLeft;
     public float _ackermannAngleRight;
     
     
+    
+    
     void Start()
     {
         _rigidbody = transform.GetComponent<Rigidbody>();
+        _rigidbody.velocity = new Vector3(0, 0, 5);
     }
     
     void Update()
     {
         steerInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
 
         CalculateSteerAngles();
         SetSteerAngles();
@@ -40,9 +45,19 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 vel = new Vector3(0, 0, speed);
+        // var localRotation = transform.localRotation;
+        // transform.localRotation  = Quaternion.Euler(localRotation.x,localRotation.y + steerInput*30 , localRotation.z);
+        Vector3 vel = new Vector3(0, 0, speed * verticalInput);
         
-        _rigidbody.velocity = vel;
+        Turn();
+        
+        Vector3 rbVel = transform.InverseTransformDirection(_rigidbody.velocity);
+        
+        Vector3 ws = transform.TransformVector(vel);
+        print("WS  = " + ws);
+        print("LS  =" + rbVel);
+
+        // _rigidbody.velocity = ws;
     }
 
     private void CalculateSteerAngles()
@@ -76,5 +91,14 @@ public class CarController : MonoBehaviour
                 wheel.steerAngle = _ackermannAngleRight;
             }
         }
+    }
+    
+    private void Turn()
+    {
+        float angle = Mathf.Rad2Deg * (steeringSpeed * steerInput * Time.deltaTime);
+
+        Vector3 transformEulerAngles = transform.eulerAngles;
+        transform.rotation =
+            Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y + angle, transformEulerAngles.z);
     }
 }
