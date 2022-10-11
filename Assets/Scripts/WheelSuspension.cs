@@ -12,15 +12,9 @@ public class WheelSuspension : MonoBehaviour
     public bool wheelRearRight;
     public bool wheelRearLeft;
 
-    public enum TiltMode
-    {
-        Off,
-        Right,
-        Left
-        
-    }
+    public bool isOnGround;
 
-    public TiltMode tiltMode;
+
     
 
     [Header("Suspension")] 
@@ -92,15 +86,17 @@ public class WheelSuspension : MonoBehaviour
             
             
             // _rigidbody.AddForceAtPosition(_suspensionForce +_forwardForce + _rightForce ,hit.point);
-            print(_springLength);
+
             _rigidbody.AddForceAtPosition(_suspensionForce ,hit.point);
             
             SetWheelMeshPos();
-            
+            isOnGround = true;
+
         }
         else
         {
             _springLength = _maxLength;
+            isOnGround = false;
             print("Fuck");
         }
         
@@ -109,33 +105,9 @@ public class WheelSuspension : MonoBehaviour
 
     private void SetWheelMeshPos()
     {
-        float finalPos;
-        if (tiltMode == TiltMode.Right)
-        {
-            if (wheelFrontRight || wheelRearRight)
-            {
-                
-                wheelMesh.localPosition = new Vector3(0, -_maxLength, 0);
-            }
-            else
-            {
-                wheelMesh.localPosition = new Vector3(0, -_minLength, 0);
-            }
-        }else if (tiltMode == TiltMode.Left)
-        {
-            if (wheelFrontRight || wheelRearRight)
-            {
-                wheelMesh.localPosition = new Vector3(0, -_minLength, 0);
-            }
-            else
-            {
-                wheelMesh.localPosition = new Vector3(0, -_maxLength, 0);
-            }
-        }
-        else
-        {
+
             wheelMesh.localPosition = new Vector3(0, -_springLength, 0);
-        }
+        
     }
 
     private void RotateYAxis()

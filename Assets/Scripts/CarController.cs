@@ -10,6 +10,14 @@ public class CarController : MonoBehaviour
     public WheelSuspension[] wheels;
     private Rigidbody _rigidbody;
 
+    public BoxCollider frontBoxCollider;
+    public BoxCollider rearBoxCollider;
+
+    public Transform frontBlockedCheckerPoint;
+    public Transform rearBlockedCheckerPoint;
+    
+    
+
     [Header("Car specs")] public float wheelBase;
     public float rearTrack;
     public float turnRadius;
@@ -24,6 +32,8 @@ public class CarController : MonoBehaviour
     [Header("bara check")] public Vector3 localVelocity;
     public float _ackermannAngleLeft;
     public float _ackermannAngleRight;
+    public bool isFrontBlocked;
+    public bool isRearBlocked;
 
 
     [Header("Visual")] public float tiltModifier;
@@ -32,6 +42,7 @@ public class CarController : MonoBehaviour
     private float _tiltAngle;
 
 
+    public float gravityMultiplier;
     private float forwardVelocity;
 
     public Transform bodyMesh;
@@ -42,21 +53,87 @@ public class CarController : MonoBehaviour
         _rigidbody = transform.GetComponent<Rigidbody>();
     }
 
+
+    
+
     void Update()
     {
         CheckInput();
+
+        CheckIsBlocked();
         // UpdateWheelTransform();
-        Tilt();
+        // Tilt();
+    }
+
+    private void CheckIsBlocked()
+    {
+        if (Physics.BoxCast(frontBlockedCheckerPoint.position , new Vector3(0.5f , 0.45f , 0f) ,
+                transform.forward , Quaternion.identity , 0.2f))
+        {
+            Debug.DrawRay(frontBlockedCheckerPoint.position , transform.forward , Color.red , 0.4f);
+            isFrontBlocked = true;
+
+        }
+        else
+        {
+            isFrontBlocked = false;
+
+        }
+        if (Physics.BoxCast(rearBlockedCheckerPoint.position , new Vector3(0.5f , 0.45f , 0f) ,
+                -transform.forward , Quaternion.identity , 0.3f))
+        {
+            Debug.DrawRay(rearBlockedCheckerPoint.position , -transform.forward , Color.red , 0.4f);
+            isRearBlocked = true;
+
+        }
+        else
+        {
+            isRearBlocked = false;
+
+        }
+        
     }
 
     private void FixedUpdate()
     {
-        MoveForward();
+
+        if (isOnGround() && !isBlocked())
+        {
+            MoveForward();
         
-        Turn();   
+            Turn();   
+        }
+
+        if (isOnGround() && isBlocked() )
+        {
+            // _rigidbody.velocity = transform.TransformDirection(new Vector3(0, 0, 0));
+            print("No movement");
+            _rigidbody.velocity = Vector3.zero;
+            forwardVelocity = 0;
+
+        }
+
+            
+            Fall();
         // _rigidbody.AddTorque(Vector3.up * steeringSpeed * Time.fixedDeltaTime * _rigidbody.mass * steerInput);
     }
 
+    private bool isBlocked()
+    {
+        if (verticalInput <-0.1 && isRearBlocked)
+        {
+            print("Blocked");
+            return true;
+        }
+
+        if (verticalInput>=-0.1 && isFrontBlocked)
+        {
+            print("Blocked");
+            return true;
+        }
+
+        return false;
+    }
     private void UpdateWheelTransform()
     {
         CalculateSteerAngles();
@@ -69,6 +146,25 @@ public class CarController : MonoBehaviour
         verticalInput = Input.GetAxis("Vertical");
     }
 
+    private bool isOnGround()
+    {
+        int numOgWheelsOnGround = 0; 
+        foreach (WheelSuspension wheel in wheels)
+        {
+            if (wheel.isOnGround)
+            {
+                numOgWheelsOnGround++;
+            }
+        }
+
+        if (numOgWheelsOnGround >= 2)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void MoveForward()
     {
         // _rigidbody.AddRelativeForce(new Vector3(Vector3.forward.x,0,Vector3.forward.z) * speed * verticalInput * Time.fixedDeltaTime * _rigidbody.mass);
@@ -77,6 +173,7 @@ public class CarController : MonoBehaviour
         // _rigidbody.velocity = transform.TransformDirection(localVelocity);
         float finalSpeed = (verticalInput < 0) ? maxSpeed * -0.8f : maxSpeed;
         forwardVelocity = Mathf.Lerp(forwardVelocity, finalSpeed, accelTime * Time.fixedDeltaTime);
+        
         localVelocity = transform.InverseTransformDirection(_rigidbody.velocity);
         localVelocity.x = 0;
         localVelocity.z = forwardVelocity;
@@ -148,28 +245,14 @@ public class CarController : MonoBehaviour
     {
         _tiltAngle = Mathf.Lerp(_tiltAngle, steerInput * tiltModifier * Mathf.Rad2Deg,
             Time.deltaTime * tiltTime);
-
-        foreach (WheelSuspension wheel in wheels)
-        {
-        //     if (_tiltAngle > 2)
-        //     {
-        //         wheel.tiltMode = WheelSuspension.TiltMode.Right;
-        //     }
-        //     else if (_tiltAngle < -2)
-        //     {
-        //         wheel.tiltMode = WheelSuspension.TiltMode.Left;
-        //     }
-        //     else
-        //     {
-        //         wheel.tiltMode = WheelSuspension.TiltMode.Off;
-        //     }
-
-        wheel.tiltMode = WheelSuspension.TiltMode.Off;
-        }
-
-
+        
         Vector3 transformEulerAngles = bodyMesh.eulerAngles;
         bodyMesh.rotation = Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y, _tiltAngle);
         // bodyMesh.rotation = Quaternion.Euler(0, 0, _tiltAngle);
+    }
+
+    private void Fall()
+    {
+        _rigidbody.AddForce(Vector3.down * _rigidbody.mass * gravityMultiplier);
     }
 }
