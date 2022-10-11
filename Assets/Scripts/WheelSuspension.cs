@@ -11,6 +11,16 @@ public class WheelSuspension : MonoBehaviour
     public bool wheelFrontRight;
     public bool wheelRearRight;
     public bool wheelRearLeft;
+
+    public enum TiltMode
+    {
+        Off,
+        Right,
+        Left
+        
+    }
+
+    public TiltMode tiltMode;
     
 
     [Header("Suspension")] 
@@ -18,14 +28,12 @@ public class WheelSuspension : MonoBehaviour
     public float springTravel;
     public float springStiffness;
     public float dampingStiffness;
-    
-    
+
     private float _minLength;
     private float _maxLength;
     private float _springLength;
     private float _lastSpringLength;
     
-
     private float _springForce;
     private float _dampingForce;
     private float _springVelocity;
@@ -33,6 +41,9 @@ public class WheelSuspension : MonoBehaviour
 
     private Vector3 _forwardForce;
     private Vector3 _rightForce;
+
+
+    private float wheelPos;
     
 
     [Header("Wheel")] 
@@ -81,6 +92,7 @@ public class WheelSuspension : MonoBehaviour
             
             
             // _rigidbody.AddForceAtPosition(_suspensionForce +_forwardForce + _rightForce ,hit.point);
+            print(_springLength);
             _rigidbody.AddForceAtPosition(_suspensionForce ,hit.point);
             
             SetWheelMeshPos();
@@ -89,6 +101,7 @@ public class WheelSuspension : MonoBehaviour
         else
         {
             _springLength = _maxLength;
+            print("Fuck");
         }
         
         
@@ -96,7 +109,33 @@ public class WheelSuspension : MonoBehaviour
 
     private void SetWheelMeshPos()
     {
-        wheelMesh.localPosition = new Vector3(0, -_springLength, 0);
+        float finalPos;
+        if (tiltMode == TiltMode.Right)
+        {
+            if (wheelFrontRight || wheelRearRight)
+            {
+                
+                wheelMesh.localPosition = new Vector3(0, -_maxLength, 0);
+            }
+            else
+            {
+                wheelMesh.localPosition = new Vector3(0, -_minLength, 0);
+            }
+        }else if (tiltMode == TiltMode.Left)
+        {
+            if (wheelFrontRight || wheelRearRight)
+            {
+                wheelMesh.localPosition = new Vector3(0, -_minLength, 0);
+            }
+            else
+            {
+                wheelMesh.localPosition = new Vector3(0, -_maxLength, 0);
+            }
+        }
+        else
+        {
+            wheelMesh.localPosition = new Vector3(0, -_springLength, 0);
+        }
     }
 
     private void RotateYAxis()

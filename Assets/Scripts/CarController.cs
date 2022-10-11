@@ -10,8 +10,7 @@ public class CarController : MonoBehaviour
     public WheelSuspension[] wheels;
     private Rigidbody _rigidbody;
 
-    [Header("Car specs")] 
-    public float wheelBase;
+    [Header("Car specs")] public float wheelBase;
     public float rearTrack;
     public float turnRadius;
     public float speed;
@@ -19,32 +18,35 @@ public class CarController : MonoBehaviour
     public float maxSpeed;
     public float accelTime;
 
-    [Header("Inputs")]
-    public float steerInput;
+    [Header("Inputs")] public float steerInput;
     public float verticalInput;
 
-    public Vector3 localVelocity;
-
+    [Header("bara check")] public Vector3 localVelocity;
     public float _ackermannAngleLeft;
     public float _ackermannAngleRight;
 
 
+    [Header("Visual")] public float tiltModifier;
+    public float tiltTime;
+
+    private float _tiltAngle;
+
+
     private float forwardVelocity;
-    
-    
+
+    public Transform bodyMesh;
+
+
     void Start()
     {
         _rigidbody = transform.GetComponent<Rigidbody>();
     }
-    
+
     void Update()
     {
-        steerInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
-
-        CalculateSteerAngles();
-        SetSteerAngles();
-
+        CheckInput();
+        // UpdateWheelTransform();
+        Tilt();
     }
 
     private void FixedUpdate()
@@ -53,6 +55,18 @@ public class CarController : MonoBehaviour
         
         Turn();   
         // _rigidbody.AddTorque(Vector3.up * steeringSpeed * Time.fixedDeltaTime * _rigidbody.mass * steerInput);
+    }
+
+    private void UpdateWheelTransform()
+    {
+        CalculateSteerAngles();
+        SetSteerAngles();
+    }
+
+    private void CheckInput()
+    {
+        steerInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
     }
 
     private void MoveForward()
@@ -68,7 +82,6 @@ public class CarController : MonoBehaviour
         localVelocity.z = forwardVelocity;
 
         _rigidbody.velocity = transform.TransformDirection(localVelocity);
-
     }
 
     // private void FixedUpdate()
@@ -94,8 +107,8 @@ public class CarController : MonoBehaviour
         {
             _ackermannAngleLeft = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * steerInput;
             _ackermannAngleRight = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius - (rearTrack / 2))) * steerInput;
-
-        }else if (steerInput < 0)
+        }
+        else if (steerInput < 0)
         {
             _ackermannAngleLeft = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius - (rearTrack / 2))) * steerInput;
             _ackermannAngleRight = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (turnRadius + (rearTrack / 2))) * steerInput;
@@ -114,19 +127,49 @@ public class CarController : MonoBehaviour
             if (wheel.wheelFrontLeft)
             {
                 wheel.steerAngle = _ackermannAngleLeft;
-            }else if (wheel.wheelFrontRight)
+            }
+            else if (wheel.wheelFrontRight)
             {
                 wheel.steerAngle = _ackermannAngleRight;
             }
         }
     }
-    
+
     private void Turn()
     {
-        float angle = Mathf.Rad2Deg * (steeringSpeed * steerInput * Time.deltaTime);
+        float angle = Mathf.Rad2Deg * (steeringSpeed * steerInput * Time.fixedDeltaTime);
 
         Vector3 transformEulerAngles = transform.eulerAngles;
         transform.rotation =
             Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y + angle, transformEulerAngles.z);
+    }
+
+    private void Tilt()
+    {
+        _tiltAngle = Mathf.Lerp(_tiltAngle, steerInput * tiltModifier * Mathf.Rad2Deg,
+            Time.deltaTime * tiltTime);
+
+        foreach (WheelSuspension wheel in wheels)
+        {
+        //     if (_tiltAngle > 2)
+        //     {
+        //         wheel.tiltMode = WheelSuspension.TiltMode.Right;
+        //     }
+        //     else if (_tiltAngle < -2)
+        //     {
+        //         wheel.tiltMode = WheelSuspension.TiltMode.Left;
+        //     }
+        //     else
+        //     {
+        //         wheel.tiltMode = WheelSuspension.TiltMode.Off;
+        //     }
+
+        wheel.tiltMode = WheelSuspension.TiltMode.Off;
+        }
+
+
+        Vector3 transformEulerAngles = bodyMesh.eulerAngles;
+        bodyMesh.rotation = Quaternion.Euler(transformEulerAngles.x, transformEulerAngles.y, _tiltAngle);
+        // bodyMesh.rotation = Quaternion.Euler(0, 0, _tiltAngle);
     }
 }
