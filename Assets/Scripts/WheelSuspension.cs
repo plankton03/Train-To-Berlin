@@ -98,12 +98,11 @@ public class WheelSuspension : MonoBehaviour
             Vector3 steeringDir = transform.right;
             Vector3 tireWorldVelocity = _rigidbody.GetPointVelocity(transform.position);
             float steeringVel = Vector3.Dot(steeringDir, tireWorldVelocity);
-            print(Mathf.Clamp01(steeringVel / tireWorldVelocity.magnitude));
-             // tGripFactor = gripFactor.Evaluate(Mathf.Clamp01(steeringVel / tireWorldVelocity.magnitude));
+            // tGripFactor = gripFactor.Evaluate(Mathf.Clamp01(steeringVel / tireWorldVelocity.magnitude));
             
             float desiredVelChange = -steeringVel * tGripFactor;
             float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
-            _rigidbody.AddForceAtPosition(steeringDir * 0.05f * desiredAccel, transform.position);
+            _rigidbody.AddForceAtPosition(steeringDir* desiredAccel*_rigidbody.mass * 0.05f * 0.5f, transform.position);
 
 
             Vector3 accelDir = transform.forward;
@@ -112,9 +111,20 @@ public class WheelSuspension : MonoBehaviour
                 float carSpeed = Vector3.Dot(transform.root.transform.forward, _rigidbody.velocity);
                 float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / carTopSpeed);
                 float availableTorque = powerCurve.Evaluate(normalizedSpeed) * accelInput;
-                // print(availableTorque);
-                _rigidbody.AddForceAtPosition(accelDir * availableTorque * _rigidbody.mass*3, transform.position);
             
+                _rigidbody.AddForceAtPosition(accelDir * availableTorque * _rigidbody.mass*10, transform.position);
+                
+                wheelMesh.Rotate(Vector3.right,carSpeed*50 * Time.fixedDeltaTime);
+                // wheelMesh.Rotate(Vector3.right,carSpeed*50 * Time.fixedDeltaTime, Space.Self);
+                // wheelMesh.Rotate(wheelMesh.transform.right,carSpeed*50 * Time.fixedDeltaTime, Space.World);
+
+                // var localRotation = wheelMesh.localRotation;
+                // print(carSpeed * 200 * Time.fixedDeltaTime * Time.time + "+" +  localRotation.eulerAngles.x+ "==" +  (carSpeed * 200 * Time.fixedDeltaTime + localRotation.eulerAngles.x ));
+                // localRotation = Quaternion.Euler(carSpeed * 200 * Time.fixedDeltaTime * Time.time + localRotation.eulerAngles.x , 0,0);
+                // print("?=" + localRotation.eulerAngles.x);
+                //
+                // wheelMesh.localRotation = localRotation;
+                
 
 
             SetWheelMeshPos();
@@ -131,6 +141,7 @@ public class WheelSuspension : MonoBehaviour
     private void SetWheelMeshPos()
     {
         wheelMesh.localPosition = new Vector3(0, -_springLength, 0);
+        
     }
 
     private void RotateYAxis()
