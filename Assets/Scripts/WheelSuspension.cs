@@ -16,40 +16,50 @@ public class WheelSuspension : MonoBehaviour
     public bool wheelRearRight;
     public bool wheelRearLeft;
 
-    
 
-    [Header("Suspension")] public float restLength;
+    [Header("Suspension")] 
+    public float restLength;
     public float springTravel;
     public float springStiffness;
     public float dampingStiffness;
-
+    
     private float _minLength;
     private float _maxLength;
     private float _springLength;
     private float _lastSpringLength;
-
     private float _springForce;
     private float _dampingForce;
     private float _springVelocity;
     private Vector3 _suspensionForce;
 
+    
+    
+    [Header("Forward movement")] 
+    public float accelMultiplier;
+    public AnimationCurve powerCurve;
+    public float accelInput;
+    public float carMaxSpeed;
+    
+    
+    [Header("Steering")]
+    public float steerTime;
+    public float steerAngle;
+    public float wheelGripFactor;
+    public float wheelGripMultiplier;
+    private float _wheelCurrentAngle;
+
+    
+
 
     [Header("Wheel")] 
     public float wheelRadius;
-    public float steerAngle;
-    public float steerTime;
     public Transform wheelMesh;
 
-    private float _wheelCurrentAngle;
 
 
     [Header("About car controlling")]
-    public float accelInput;
-    public float carTopSpeed;
-    public AnimationCurve powerCurve;
     public AnimationCurve gripFactor;
     // [Range(0, 1)] public float tireGripFactor;
-    public float wheelGripFactor;
 
     void Start()
     {
@@ -114,14 +124,16 @@ public class WheelSuspension : MonoBehaviour
     public void Steering()
     {
         Vector3 steeringDir = transform.right;
+        
         Vector3 tireWorldVelocity = _rigidbody.GetPointVelocity(transform.position);
         float steeringVel = Vector3.Dot(steeringDir, tireWorldVelocity);
-        // tGripFactor = gripFactor.Evaluate(Mathf.Clamp01(steeringVel / tireWorldVelocity.magnitude));
+        
+        float tGripFactor = gripFactor.Evaluate(Mathf.Clamp01(steeringVel / tireWorldVelocity.magnitude));
             
         float desiredVelChange = -steeringVel * wheelGripFactor;
         float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
             
-        Vector3 gripForce = steeringDir* desiredAccel*_rigidbody.mass * 0.05f * 0.1f;
+        Vector3 gripForce = steeringDir* desiredAccel*_rigidbody.mass * wheelGripMultiplier;
             
         _rigidbody.AddForceAtPosition(gripForce, transform.position);
         
@@ -133,12 +145,13 @@ public class WheelSuspension : MonoBehaviour
     {
         Vector3 accelDir = transform.forward;
             
-        accelInput = (accelInput >= 0f) ? 0.8f : -0.6f;
+        accelInput = (accelInput >= 0f) ? 1f : -0.8f;
         float carSpeed = Vector3.Dot(transform.root.transform.forward, _rigidbody.velocity);
-        float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / carTopSpeed);
+        float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / carMaxSpeed);
         float availableTorque = powerCurve.Evaluate(normalizedSpeed) * accelInput;
 
-        var forwardForce = accelDir * availableTorque * _rigidbody.mass*3;
+        var forwardForce = accelDir * availableTorque * _rigidbody.mass * accelMultiplier;
+        
         _rigidbody.AddForceAtPosition(forwardForce, transform.position);
         
         

@@ -33,7 +33,7 @@ public class CarController : MonoBehaviour
         foreach (WheelSuspension wheel in wheels)
         {
             wheel.accelInput = verticalInput;
-            wheel.carTopSpeed = maxSpeed;
+            wheel.carMaxSpeed = maxSpeed;
         }
     }
 

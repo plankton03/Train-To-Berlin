@@ -87,8 +87,8 @@ MonoBehaviour:
   wheelRearLeft: 1
   restLength: 0.28
   springTravel: 0.08
-  springStiffness: 100000
-  dampingStiffness: 7000
+  springStiffness: 1000
+  dampingStiffness: 70
   wheelRadius: 0.2035
   steerAngle: 0
   steerTime: 100
@@ -621,8 +621,8 @@ MonoBehaviour:
   wheelRearLeft: 0
   restLength: 0.28
   springTravel: 0.08
-  springStiffness: 100000
-  dampingStiffness: 7000
+  springStiffness: 1000
+  dampingStiffness: 70
   wheelRadius: 0.2035
   steerAngle: 0
   steerTime: 100
@@ -920,8 +920,8 @@ MonoBehaviour:
   wheelRearLeft: 0
   restLength: 0.28
   springTravel: 0.08
-  springStiffness: 100000
-  dampingStiffness: 7000
+  springStiffness: 1000
+  dampingStiffness: 70
   wheelRadius: 0.2035
   steerAngle: 0
   steerTime: 100
@@ -1174,8 +1174,8 @@ MonoBehaviour:
   wheelRearLeft: 0
   restLength: 0.28
   springTravel: 0.08
-  springStiffness: 100000
-  dampingStiffness: 7000
+  springStiffness: 1000
+  dampingStiffness: 70
   wheelRadius: 0.2035
   steerAngle: 0
   steerTime: 100
