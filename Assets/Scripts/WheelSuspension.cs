@@ -138,7 +138,7 @@ public class WheelSuspension : MonoBehaviour
         float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / carTopSpeed);
         float availableTorque = powerCurve.Evaluate(normalizedSpeed) * accelInput;
 
-        var forwardForce = accelDir * availableTorque * _rigidbody.mass*6;
+        var forwardForce = accelDir * availableTorque * _rigidbody.mass*3;
         _rigidbody.AddForceAtPosition(forwardForce, transform.position);
         
         
